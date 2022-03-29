@@ -1,11 +1,12 @@
-library(pcalg)
-library(igraph)
-library(combinat)
-library(statGraph)
-library(arrangements)
+#Libararies Required
+library(pcalg)       # Libary for Graphical models and Casual inference
+library(igraph)      # Library for network Analysis and visualization
+library(combinat)    # Library for Combinatoric utilities
+library(statGraph)   # Library for statistical methods for graphs
+library(arrangements)# Library for fast generation of permutations, partitions, and compositions
 
 
-areeq=function(a,b,p)
+areeq=function(a,b,p)   # Function identifies whether two graphs are equal
 {
   for(i in 1:length(a[1,]))
     for(j in 1:length(a[1,]))
@@ -13,20 +14,20 @@ areeq=function(a,b,p)
         return(0)
   return(1)
 }
-areisogr=function(g1,g2)
+areisogr=function(g1,g2)  # Function to compare the adjacency matrices of two graphs are isomorphic
 {
   a1=as.matrix(get.adjacency(g1))
   a2=as.matrix(get.adjacency(g2))
   return(areiso(a1,a2))
 }
-areisowithany=function(g,G)
+areisowithany=function(g,G) # Function to check whether a graph is isomorphic to any graph in a set of graphs
 {
   for(i in 1:length(G))
     if(areisogr(g,G[i])==1)
       return(1)
   return(0)
 }
-areiso=function(a,b)
+areiso=function(a,b) # Checking whether to adjacency matrices of two graphs are isomorphic or not by considering all the permutations of all vertices.
 {
   if(length(a[1,])!=length(b[1,]))
     return(0)
@@ -36,27 +37,27 @@ areiso=function(a,b)
       return(1)
   return(0)
 }
-indeg=function(a)
+indeg=function(a) #Find indegree of all vertices in a directed graph
 {
   c=rep(0,length(a[1,]))
   for(i in 1:length(a[1,]))
     c[i]=sum(a[,i])
   return(sort(c))
 }
-outdeg=function(a)
+outdeg=function(a) #Find outdegree of all vertices in a directed graph
 {
   c=rep(0,length(a[1,]))
   for(i in 1:length(a[1,]))
     c[i]=sum(a[i,])
   return(sort(c))
 }
-naiveisogr=function(g1,g2)
+naiveisogr=function(g1,g2) #Function to compare the adjacency matrices of two graphs are naive isomorphic
 {
   a1=as.matrix(get.adjacency(g1))
   a2=as.matrix(get.adjacency(g2))
   return(naiveiso(a1,a2))
 }
-naiveiso=function(a,b)
+naiveiso=function(a,b)  # Checking whether to adjacency matrices of two graphs are naive isomorphic or not by comparing the degrees of all vertices.
 {
   if(length(a[1,])!=length(b[1,]))
     return(0)
@@ -72,7 +73,7 @@ naiveiso=function(a,b)
       return(0)
   return(1)
 }
-toadj=function(g)
+toadj=function(g) # take a graph and returns its adjacency matrix
 {
   a=matrix(data=0,nrow=length(g@nodes),ncol=length(g@nodes))
   for(i in 1:length(g@nodes))
@@ -86,36 +87,14 @@ toadj=function(g)
   return(a)
 }
 
-outdeg2=function(a)
-{
-  b=rep(0,length(a[1,]))
-  for(i in 1:length(a[1,]))
-    b[i]=sum(a[i,])
-  return(which(b>=2))
-}
-duplicable=function(a)
-{
-  g=graph.adjacency(a, mode = "directed",diag=TRUE)
-  b=outdeg2(a)
-  d=b
-  c=setdiff(1:length(a[1,]),b)
-  for(i in 1:length(c))
-  {
-    t=intersect(setdiff(as.numeric(subcomponent(g,i,mode="out")),i),b)
-    if(length(t)>=1)
-      d=c(b,i);
-  }
-  return(d)
-}
-
-indeg0=function(a)
+indeg0=function(a) # Find the set of vertices with indegree equal to zero
 {
   b=rep(0,length(a[1,]))
   for(i in 1:length(a[1,]))
     b[i]=sum(a[,i])
   return(which(b==0))
 }
-outdeg0=function(a)
+outdeg0=function(a) # Find the set of vertices with outdegree equal to zero
 {
   b=rep(0,length(a[1,]))
   for(i in 1:length(a[1,]))
@@ -123,7 +102,8 @@ outdeg0=function(a)
   return(which(b==0))
 }
 
-adjlist_find_paths <- function(a, n, m, path = list()) {
+adjlist_find_paths <- function(a, n, m, path = list()) # Find the set of all paths in a directed acyclic graph
+{
   path <- c(path, list(n))
   if (n == m) {
     return(list(path))
@@ -139,15 +119,14 @@ adjlist_find_paths <- function(a, n, m, path = list()) {
   }
 }
 
-# Find paths in graph from vertex source to vertex dest.
-paths_from_to <- function(graph, source, dest) {
+paths_from_to <- function(graph, source, dest) # Find paths in graph from vertex source to vertex dest.
+{
   a <- as_adj_list(graph, mode = "out")
   paths <- adjlist_find_paths(a, source, dest)
   lapply(paths, function(path) {V(graph)[unlist(path)]})
 }
 
-
-exec=function(texc,i,u)
+exec=function(texc,i,u) # returns the execution time of an algorithm u to be executed on an edge 1, fog 2, an cloud 3
 {
   if(i==1)
     return(texc[3,u])
@@ -156,22 +135,22 @@ exec=function(texc,i,u)
   if(i>2)
     return(texc[1,u])
 }
-distnc=function(tdist,i,u,excec,k)
+distnc=function(tdist,i,u,excec,k) # Finds the transmission time from one node to another considering input and output side and data transmission speed
 {
   return(tdist[u,i]*excec[1,k]+tdist[i,u]*excec[2,k])
 }
-ptoset=function(tdist,texc,i,u,k,excec)
+ptoset=function(tdist,texc,i,u,k,excec) # Find the total response time of an algorithm u requested by node i to be executed on the node k, when the algorithm u does not require any input from other algorithms
 {
   return(min(distnc(tdist,i,u,excec,k)+exec(texc,u,k)))
 }
-stoset=function(tdist,texc,u,b,k,excec)
+stoset=function(tdist,texc,u,b,k,excec) # Find the total response time of an algorithm u requested by node i to be executed on the node k, when the algorithm u does require some inputs from other algorithms
 {
   x=rep(0,length(u))
   for(i in 1:length(x))
     x[i]=ptoset(tdist,texc,u[i],b,k,excec)
   return(max(x))
 }
-lento=function(i,A,tdist,texc,p,excec)
+lento=function(i,A,tdist,texc,p,excec) # Find the maximum response time of all the algorithms considering their execution flows (algorithms dependencies via all paths)
 {
   x=rep(0,length(p))
   for(k in 1:length(p)){
@@ -183,42 +162,7 @@ lento=function(i,A,tdist,texc,p,excec)
   }
   return(max(x))
 }
-###################################################
-distncli=function(tdist,i,u,excec,k)
-{
-  return(tdist[u,i]*excec[1,k]+tdist[i,u]*excec[2,k])
-}
-ptosetli=function(tdist,texc,i,u,k,excec)
-{
-  return(min(distnc(tdist,i,u,excec,k)+exec(texc,u,k)))
-}
-ptosetlimin=function(tdist,texc,i,u,k,excec)
-{
-  return(tdist[i,u]*excec[2,k])
-}
-stosetli=function(tdist,texc,u,b,k,excec)
-{
-  x=rep(0,length(u))
-  for(i in 1:length(x))
-    x[i]=ptosetli(tdist,texc,u[i],b,k,excec)
-  return(max(x))
-}
-lentoli=function(i,A,tdist,texc,p,excec)
-{
-  x=rep(0,length(p))
-  for(k in 1:length(p)){
-    if(length((p[[k]]))>1)
-      for(j in seq(length(p[[k]]),2))
-        x[k]=x[k]+stosetli(tdist,texc,A[as.numeric(p[[k]][j])],A[as.numeric(p[[k]][j-1])],
-                           as.numeric(p[[k]][j-1]),excec)
-    x[k]=x[k]+ptosetli(tdist,texc,i,A[as.numeric(p[[k]][1])]
-                       ,as.numeric(p[[k]][1]),excec)-ptosetlimin(
-                         tdist,texc,i,A[as.numeric(p[[k]][1])],
-                         as.numeric(p[[k]][1]),excec)
-  }
-  return(max(x))
-}
-memofun=function(A,p,excec,no.rob)
+memofun=function(A,p,excec,no.rob) # Define the algebra of memory
 {
   x=sum(excec[1,])*32+sum(excec[2,])*32
   y=matrix(data=0,nrow=length(p),ncol=no.rob)
@@ -236,13 +180,11 @@ memofun=function(A,p,excec,no.rob)
   return((x+max(y))/1024/1024)
 }
 
-Dtali=rep(0,15) # ours
-stDtali=rep(0,15) # ours sd
-Dtawodp=rep(0,15)# without duplication
-stDtawodp=rep(0,15)# without duplication sd
-timetable=rep(0,15)# average time of running code
+Dtawodp=rep(0,15)# solutions using our method using 1 to 15 robots
+stDtawodp=rep(0,15)# sd of solutions using our method using 1 to 15 robots
+timetable=rep(0,15)# average time of running code using 1 to 15 robots
 timefind=0
-a=matrix(data=0,nrow=7,ncol=7)
+a=matrix(data=0,nrow=7,ncol=7) # adjacency matix of the algorithms
 a[1,2]=1
 a[2,3]=1
 a[2,4]=1
@@ -252,7 +194,7 @@ a[5,6]=1
 a[6,7]=1
 
 
-texc=matrix(data=0,nrow=3,ncol=length(a[1,]))
+texc=matrix(data=0,nrow=3,ncol=length(a[1,])) # average execution time of all algorithms to be executed on each node
 texc[1,5]=0.44457
 texc[1,1]=4.4754
 texc[1,2]=0.00072
@@ -276,7 +218,7 @@ texc[3,7]=4.7496e-5
 texc[3,4]=0.00027
 
 texc=texc*1000
-excec=matrix(data=0,nrow=3,ncol=length(a[1,]))
+excec=matrix(data=0,nrow=3,ncol=length(a[1,])) # Output memory of all algorithms
 excec[1,5]=24*3*256*256
 excec[1,1]=24*3*256*256*10
 excec[1,2]=1120*10
@@ -301,9 +243,9 @@ excec[3,4]=8010779
 
 excec[1:2,]=excec[1:2,]*0.125
 excec=excec/32
-for(i in 2:11){ # i-1 is number of robots
+for(i in 2:15){ # i-1 is number of robots
   print(i-1)
-  a=matrix(data=0,nrow=7,ncol=7)
+  a=matrix(data=0,nrow=7,ncol=7) # adjacency matix of the algorithms (repetition of the values because the values ma change after each iteration)
   a[1,2]=1
   a[2,3]=1
   a[2,4]=1
@@ -311,7 +253,7 @@ for(i in 2:11){ # i-1 is number of robots
   a[4,5]=1
   a[5,6]=1
   a[6,7]=1
-  texc=matrix(data=0,nrow=3,ncol=length(a[1,]))
+  texc=matrix(data=0,nrow=3,ncol=length(a[1,])) # average execution time of all algorithms to be executed on each node (repetition of the values because the values ma change after each iteration)
   texc[1,5]=0.44457
   texc[1,1]=4.4754
   texc[1,2]=0.00072
@@ -335,7 +277,7 @@ for(i in 2:11){ # i-1 is number of robots
   texc[3,4]=0.00027
   
   texc=texc*1000
-  excec=matrix(data=0,nrow=3,ncol=length(a[1,]))
+  excec=matrix(data=0,nrow=3,ncol=length(a[1,]))# Output memory of all algorithms (repetition of the values because the values ma change after each iteration)
   excec[1,5]=24*3*256*256
   excec[1,1]=24*3*256*256*10
   excec[1,2]=1120*10
@@ -360,7 +302,7 @@ for(i in 2:11){ # i-1 is number of robots
   
   excec[1:2,]=excec[1:2,]*0.125
   excec=excec/32
-  gr=graph.adjacency(a, mode = "directed",diag=TRUE)
+  gr=graph.adjacency(a, mode = "directed",diag=TRUE) # Transform the adjacency matrix of all algorithms into a directed graph
   o0=outdeg0(a)
   i0=indeg0(a)
   p=as.list(0)
@@ -369,17 +311,12 @@ for(i in 2:11){ # i-1 is number of robots
       p=c(p,paths_from_to(gr,i0[k],o0[j]))
   p=p[2:length(p)];
   cont=i+5
-  ddat=rep(0,cont)  
   ddatwodp=rep(0,cont)
-  ddatold=rep(0,cont)
   tttime=rep(0,cont)
   g2=0
   tmp=i*(i-1)/2
-  ddat=rep(0,cont)  
   ddatwodp=rep(0,cont)
-  ddatpli=rep(0,cont)
   memoours=rep(0,cont)
-  memoli=rep(0,cont)
   tttime=rep(0,cont)
   for(cnt in 1:cont)
   {
@@ -392,7 +329,7 @@ for(i in 2:11){ # i-1 is number of robots
       n=i-1
     }
     repeat{
-      g1 <- erdos.renyi.game(i,n,type="gnm",directed = FALSE)# for network
+      g1 <- erdos.renyi.game(i,n,type="gnm",directed = FALSE)# for network randomly generated
       f=as.matrix(get.adjacency(g1))
       if(length(clusters(g1)$csize)==1 && cnt==1){
         break
@@ -498,27 +435,21 @@ for(i in 2:11){ # i-1 is number of robots
       gp=graph.adjacency(fp, mode = "undirected", weighted = TRUE, diag = FALSE)
       tdist <- shortest.paths(gp, algorithm = "dijkstra")
       x=rep(0,i-1);
-      xli=x
       l=rep(1,length(a[1,]))
       lp=l
-      lpli=l
       for(k in 3:(i+1)){
         x[k-2]=lento(k,l,tdist,texc,p,excec)
-        xli[k-2]=lentoli(k,l,tdist,texc,p,excec)
       }
       mem1=memofun(l,p,excec,i-1)
-      mem1li=memofun(l,p,excec,i-1)
       memn=memofun(l,p,excec,i-1)
       xn=sqrt(sum(x^2))
       y=x
-      yli=xli
       yp=x
       allcomp=combinations(length(fp[1,]),length(a[1,]),replace=TRUE)
       zert=rep(0,length(allcomp[,1]))
       for(zed in 1:length(allcomp[,1])){
         for(k in 3:(i+1)){
           x[k-2]=lento(k,allcomp[zed,],tdist,texc,p,excec)
-          xli[k-2]=lentoli(k,allcomp[zed,],tdist,texc,p,excec)
         }
         mem2=memofun(allcomp[zed,],p,excec,i-1)
         zert[zed]=sqrt(sum((x/xn)^2)+(mem2/memn)^2)*0.001
@@ -528,41 +459,23 @@ for(i in 2:11){ # i-1 is number of robots
           lp=allcomp[zed,]
           mem1=mem2
         }
-        if(sqrt(sum((yli/xn)^2+(mem2/memn)^2))>=sqrt(sum((xli/xn)^2)+(mem1li/memn)^2)){
-          lpli=allcomp[zed,]
-          for(k in 3:(i+1)){
-            yli[k-2]=xli[k-2];
-            y[k-2]=lento(k,lpli,tdist,texc,p,excec);
-          }
-          mem1li=mem2
         }
       }
       ddatwodpp[temp]=sqrt(sum(yp^2))
-      ddatplip[temp]=sqrt(sum(y^2))
-      memolip[temp]=mem1li
       memooursp[temp]=mem1
       end_time <- proc.time()[3]
       timefind[temp]=end_time - start_time
     }
     ddatwodp[cnt]=mean(ddatwodpp)
-    ddatpli[cnt]=mean(ddatplip)
     memoours[cnt]=mean(memooursp)
-    memoli[cnt]=mean(memolip)
     end_time <- proc.time()[3]
-    #windows()
-    #layout(matrix(c(1, 2), nrow=2, byrow=TRUE))
-    #plot(gp)
-    #plot(zert,ylab="Average overall time",xlab="Order(all algorithm allocation)")
     print(mean(timefind))
-    print(c(sqrt((memoours[cnt]/memn)^2+(ddatwodp[cnt]/xn)^2),sqrt((memoli[cnt]/memn)^2+(ddatpli[cnt]/xn)^2)))
+    print(sqrt((memoours[cnt]/memn)^2+(ddatwodp[cnt]/xn)^2))
     ddatwodp[cnt]=sqrt((memoours[cnt]/memn)^2+(ddatwodp[cnt]/xn)^2)
-    ddatpli[cnt]=sqrt((memoli[cnt]/memn)^2+(ddatpli[cnt]/xn)^2)
     tttime[cnt]=as.numeric(mean(timefind))
   }
   timetable[i-1]=mean(tttime)
   Dtawodp[i-1]=mean(ddatwodp);
   stDtawodp[i-1]=sd(ddatwodp)
-  Dtali[i-1]=mean(ddatpli);
-  stDtali[i-1]=sd(ddatpli)
-  print(c(timetable[i-1],Dtawodp[i-1],stDtawodp[i-1],Dtali[i-1],stDtali[i-1]))
+  print(c(timetable[i-1],Dtawodp[i-1],stDtawodp[i-1]))
 }
