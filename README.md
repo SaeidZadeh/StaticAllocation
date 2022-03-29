@@ -14,6 +14,9 @@ The result is the solution with the lowest response time and memory requirements
 
 All packages (libraries) to execute the code are included in the code.
 
+## Requirements
+Install the requirements in a R environment with `packages(pcalg,igraph,combinat,statgraph,arrangements)`.
+
 
 ## Citation
 ```
