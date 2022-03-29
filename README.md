@@ -22,19 +22,12 @@ Install the requirements in a R environment with `packages(pcalg,igraph,combinat
 ```
 @misc{https://doi.org/10.48550/arxiv.2104.12710,
   doi = {10.48550/ARXIV.2104.12710},
-  
   url = {https://arxiv.org/abs/2104.12710},
-  
   author = {Alirezazadeh, Saeid and Correia, André and Alexandre, Luís A.},
-  
   keywords = {Robotics (cs.RO), FOS: Computer and information sciences, FOS: Computer and information sciences},
-  
   title = {Optimal Algorithm Allocation for Robotic Network Cloud Systems},
-  
   publisher = {arXiv},
-  
   year = {2021},
-  
   copyright = {arXiv.org perpetual, non-exclusive license}
 }
 ```
